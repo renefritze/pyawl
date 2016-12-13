@@ -1,3 +1,4 @@
 pytest-runner
 scrapy
 kivy
+pandas
