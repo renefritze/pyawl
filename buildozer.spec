@@ -4,13 +4,13 @@
 title = My Application
 
 # (str) Package name
-package.name = myapp
+package.name = pyawl
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.test
+package.domain = net.pyawl
 
 # (str) Source code where the main.py live
-source.dir = src/pyawl
+source.dir = src/
 
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas
@@ -36,7 +36,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy, hostpython3, python3, pandas, bs4
+requirements = kivy, python3crystax, pandas, beautifulsoup4
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -183,7 +183,7 @@ android.ndk_path = /opt/crystax-ndk-10.3.2
 [buildozer]
 
 # (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
-log_level = 1
+log_level = 2
 
 # (int) Display warning if buildozer is run as root (0 = False, 1 = True)
 warn_on_root = 1

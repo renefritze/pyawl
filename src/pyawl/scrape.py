@@ -32,7 +32,7 @@ class Item(object):
         return '{}\n{}\n{}\n{}'.format(self.title, self.price, self.href, self.time)
 
 
-def parse(amazon_id='3F9MA6OUOXDV6', amazon_country='de', reveal='all', sortorder='date-added'):
+def parse(amazon_id='3F9MA6OUOXDV6', amazon_country='de', reveal='unpurchased', sortorder='date-added'):
     """
     :param amazon_id: wishlist id
     :param amazon_country: shop top level domain
