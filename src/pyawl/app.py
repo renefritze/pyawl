@@ -74,11 +74,12 @@ class PyAwlApp(App):
         rv = self.root.ids.listview
         rv.key_viewclass = "viewclass"
         rv.key_size = "height"
+        self._order = ('date-added', 'priority')
         self.reload_list()
 
     def reload_list(self):
         wishlist = []
-        for idx, item in enumerate(pyawl.scrape.parse()):
+        for idx, item in enumerate(pyawl.scrape.parse(sortorder=self._order[0])):
             wishlist.append({
                 "index": idx,
                 "viewclass": "WishlistItem",
@@ -89,4 +90,5 @@ class PyAwlApp(App):
         self.root.ids.listview.data = wishlist
 
     def toggle(self):
-        pass
+        self._order = (self._order[1], self._order[0])
+        self.reload_list()
