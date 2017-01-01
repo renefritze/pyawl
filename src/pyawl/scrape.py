@@ -15,9 +15,10 @@ class Item(object):
     _monetary = locale.localeconv()
 
     def __init__(self, item):
-        link = item.find('a', id=self._itemName)
+        info = item.find('div', id=re.compile('^itemInfo_(.*)'), class_='a-fixed-right-grid-col g-item-details a-col-left')
+        link = info.find('a', id=self._itemName)
         href = link['href']
-        price = item.find('span', id=self._itemPrice).string.strip().replace('EUR ', '').replace(
+        price = info.find('span', id=self._itemPrice).string.strip().replace('EUR ', '').replace(
             self._monetary['mon_thousands_sep'], '').replace(',', '.')
         try:
             price = Decimal(price)
@@ -27,6 +28,7 @@ class Item(object):
         self.href = href.strip()
         self.price = Decimal(price)
         self.time = time.time()
+        self.image = item.find('img')['src']
 
     def __repr__(self):
         return '{}\n{}\n{}\n{}'.format(self.title, self.price, self.href, self.time)
@@ -50,10 +52,11 @@ def parse(amazon_id='3F9MA6OUOXDV6', amazon_country='de', reveal='unpurchased', 
     url = '{}/registry/wishlist/{}'.format(domain, amazon_id)
     response = requests.get(url, headers=headers, params={'reveal': reveal, 'sort': sortorder, 'layout': 'standard'})
     soup = BeautifulSoup(response.text, 'html.parser')
-    list_div = soup.find_all('div', id=re.compile('^itemInfo_(.*)'), class_='a-fixed-right-grid-col g-item-details a-col-left')
-    items = [Item(item) for item in list_div]
-    pprint.pprint(items)
-    return items
+    list_div = soup.find_all('div', id=re.compile('^item_(.*)'), class_='a-fixed-left-grid a-spacing-large')
+    #list_div = soup.find_all('div', id=re.compile('^itemInfo_(.*)'), class_='a-fixed-right-grid-col g-item-details a-col-left')
+    for item in list_div:
+        yield Item(item)
 
 if __name__ == '__main__':
-    parse()
+    for item in parse():
+        pprint(item)
