@@ -2,6 +2,8 @@ import decimal
 import locale
 import pprint
 import re
+from datetime import datetime
+
 import requests
 import time
 from bs4 import BeautifulSoup
@@ -25,10 +27,12 @@ class Item(object):
         except decimal.InvalidOperation:
             price = Decimal(0)
         self.title = link['title'].strip()
+        self.id = info['id'].replace('itemInfo_', '').strip()
         self.href = href.strip()
         self.price = Decimal(price)
         self.time = time.time()
         self.image = item.find('img')['src']
+        self.date = datetime.now()
 
     def __repr__(self):
         return '{}\n{}\n{}\n{}'.format(self.title, self.price, self.href, self.time)
@@ -54,8 +58,7 @@ def parse(amazon_id='3F9MA6OUOXDV6', amazon_country='de', reveal='unpurchased', 
     soup = BeautifulSoup(response.text, 'html.parser')
     list_div = soup.find_all('div', id=re.compile('^item_(.*)'), class_='a-fixed-left-grid a-spacing-large')
     #list_div = soup.find_all('div', id=re.compile('^itemInfo_(.*)'), class_='a-fixed-right-grid-col g-item-details a-col-left')
-    for item in list_div:
-        yield Item(item)
+    return [Item(item) for item in list_div]
 
 if __name__ == '__main__':
     for item in parse():

@@ -8,7 +8,10 @@ from kivy.base import runTouchApp
 from kivy.lang import Builder
 from kivy.metrics import sp
 from kivy.app import App
+from matplotlib import pyplot as plt
+
 import pyawl.scrape
+import pyawl.timeseries
 
 KV = """
 <ContactSeparator@Widget>:
@@ -46,6 +49,7 @@ KV = """
 # app example
 BoxLayout:
     orientation: "vertical"
+    id: layout
     BoxLayout:
         padding: "2sp"
         spacing: "2sp"
@@ -79,13 +83,23 @@ class PyAwlApp(App):
 
     def reload_list(self):
         wishlist = []
-        for idx, item in enumerate(pyawl.scrape.parse(sortorder=self._order[0])):
+        items = pyawl.scrape.parse(sortorder=self._order[0])
+        for idx, item in enumerate(items):
             wishlist.append({
                 "index": idx,
                 "viewclass": "WishlistItem",
                 "image": item.image,
                 "title": item.title
             })
+
+        pickle = '/tmp/test.pickle'
+        fakes = pyawl.timeseries.fake_data(items)
+        for fake in fakes:
+            pyawl.timeseries.add(fake, pickle)
+        pyawl.timeseries.add(items, pickle)
+        fig, ax = plt.subplots()
+        pyawl.timeseries.plot(pickle, ax)
+        self.root.add_widget(fig.canvas)
 
         self.root.ids.listview.data = wishlist
 
